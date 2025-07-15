@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "py-step-audio"
+dynamic = ["version"]
+description = 'A simple step sequencer'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "U.N. Owen", email = "void@some.where" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = []
+
+[project.urls]
+Documentation = "https://github.com/U.N. Owen/py-step-audio#readme"
+Issues = "https://github.com/U.N. Owen/py-step-audio/issues"
+Source = "https://github.com/U.N. Owen/py-step-audio"
+
+[tool.hatch.version]
+path = "src/py_step_audio/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/py_step_audio tests}"
+
+[tool.coverage.run]
+source_pkgs = ["py_step_audio", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/py_step_audio/__about__.py",
+]
+
+[tool.coverage.paths]
+py_step_audio = ["src/py_step_audio", "*/py-step-audio/src/py_step_audio"]
+tests = ["tests", "*/py-step-audio/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
