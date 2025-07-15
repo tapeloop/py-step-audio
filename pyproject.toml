@@ -11,7 +11,7 @@ requires-python = ">=3.8"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "U.N. Owen", email = "void@some.where" },
+  { name = "Tapeloop", email = "void@some.where" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -24,12 +24,20 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "pygame",
+  "tkinter",
+  "numpy",
+  "pydub"
+]
+
+[project.scripts]
+py-step-audio = "py_step_audio.sequencer:main"
 
 [project.urls]
-Documentation = "https://github.com/U.N. Owen/py-step-audio#readme"
-Issues = "https://github.com/U.N. Owen/py-step-audio/issues"
-Source = "https://github.com/U.N. Owen/py-step-audio"
+Documentation = "https://github.com/tapeloop/py-step-audio#readme"
+Issues = "https://github.com/tapeloop/py-step-audio/issues"
+Source = "https://github.com/tapeloop/py-step-audio"
 
 [tool.hatch.version]
 path = "src/py_step_audio/__about__.py"
