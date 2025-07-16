@@ -2,6 +2,8 @@
 Create a wrapped sequencer with trim and playback functionality. The principal settings are based around the original sample
 
 """
+import sys
+import os
 import tkinter as tk
 from tkinter import filedialog
 from pydub import AudioSegment
@@ -9,6 +11,7 @@ import pygame
 import tempfile
 import threading
 from editor import WaveformTrimUI
+from utils import calculate_bpm
 
 pygame.mixer.init()
 
@@ -36,7 +39,7 @@ def calculate_bpm(filename: str, beats_per_loop: int = 4) -> float:
 
 
 class StepSequencerApp(tk.Tk):
-    def __init__(self):
+    def __init__(self, initial_wav=None):
         super().__init__()
         self.title("Step Sequencer with Trim and Playback")
 
@@ -47,19 +50,24 @@ class StepSequencerApp(tk.Tk):
         self.current_step = 0
         self.tempo = 120
 
+        if initial_wav:
+            audio = AudioSegment.from_wav(initial_wav)
+            self.samples[0] = audio
+            self.tempo = int(calculate_bpm(initial_wav))
+
+
         control_frame = tk.Frame(self)
         control_frame.pack(side='top', fill='x', padx=10)
 
-        self.start_button = tk.Button(control_frame, text="Start", command=self.start)
-        self.start_button.pack(side='left', padx=5)
-
-        self.stop_button = tk.Button(control_frame, text="Stop", command=self.stop)
-        self.stop_button.pack(side='left', padx=5)
-
+        self.play_button = tk.Button(control_frame, text="Start", command=self.start_stop)
+        self.play_button.pack(side='left', padx=5)
+        
         tk.Label(control_frame, text="Tempo (BPM)").pack(side='left', padx=5)
-        self.tempo_scale = tk.Scale(control_frame, from_=60, to=200, orient='horizontal')
+        self.tempo_scale = tk.Scale(control_frame, from_=30, to=200, orient='horizontal')
         self.tempo_scale.set(self.tempo)
         self.tempo_scale.pack(side='left', padx=5)
+
+        self.load_buttons = []
 
         grid_frame = tk.Frame(self)
         grid_frame.pack(padx=10, pady=10)
@@ -71,7 +79,10 @@ class StepSequencerApp(tk.Tk):
             button_panel = tk.Frame(row_frame)
             button_panel.pack(side='left', padx=5)
 
-            tk.Button(button_panel, text="Load", command=lambda i=row: self.load_sample(i)).pack()
+            load_btn = tk.Button(button_panel, text="Load", command=lambda i=row: self.load_sample(i))
+            load_btn.pack()
+            self.load_buttons.append(load_btn)
+
             tk.Button(button_panel, text="Trim", command=lambda i=row: self.trim_sample(i)).pack()
             tk.Button(button_panel, text="Preview", command=lambda i=row: self.play_sample(i)).pack()
 
@@ -86,12 +97,14 @@ class StepSequencerApp(tk.Tk):
                 step_row.append(var)
             self.grid_buttons.append(step_row)
 
-    def load_sample(self, index):
-        file_path = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
-        if file_path:
-            audio = AudioSegment.from_wav(file_path)
-            self.samples[index] = audio
-            print(f"Loaded sample {index + 1}")
+    def start_stop(self):
+        if not self.is_playing:
+            self.is_playing = True
+            self.play_button.config(text="Stop")
+            self.after(0, self.play_loop)
+        else:
+            self.is_playing = False
+            self.play_button.config(text="Start")
 
     def trim_sample(self, index):
         if self.samples[index]:
@@ -104,14 +117,24 @@ class StepSequencerApp(tk.Tk):
         if self.samples[index]:
             threading.Thread(target=play_audio, args=(self.samples[index],), daemon=True).start()
 
-    def start(self):
+    def start_stop(self):
         if not self.is_playing:
             self.is_playing = True
+            self.play_button.config(text="Stop")
             self.after(0, self.play_loop)
+        else:
+            self.is_playing = False
+            self.play_button.config(text="Start")
 
-    def stop(self):
-        self.is_playing = False
-
+    def load_sample(self, index):
+        file_path = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
+        if file_path:
+            audio = AudioSegment.from_wav(file_path)
+            self.samples[index] = audio
+            file_name = os.path.basename(file_path)
+            self.load_buttons[index].config(text=file_name)
+            print(f"Loaded sample {index + 1}")        
+            
     def play_loop(self):
         if not self.is_playing:
             return
@@ -124,5 +147,8 @@ class StepSequencerApp(tk.Tk):
         interval = int(60000 / self.tempo_scale.get() / 4)  # 16th notes
         self.after(interval, self.play_loop)
 
+
+
 if __name__ == "__main__":
-    StepSequencerApp().mainloop()
+    initial_wav = sys.argv[1] if len(sys.argv) > 1 else None
+    StepSequencerApp(initial_wav).mainloop()

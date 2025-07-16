@@ -18,6 +18,13 @@
 - Generate audio files for step sequencers
 - Create wrapped sequncers around single samples
 
+## Usage
+
+To use `py-step-audio`, you can import it in your Python script and call the `sample` function to generate an audio file. Here's a basic example:
+
+```python py-step-audio sample.wav```
+
+This will startup a step sequencer with a single sample and generate an audio file named `sample.wav` in the current directory.
 
 ## Installation
 
