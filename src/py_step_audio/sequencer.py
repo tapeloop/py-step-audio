@@ -32,11 +32,6 @@ def get_wav_duration_seconds(filename: str) -> float:
         duration = frames / float(rate)
     return duration
 
-def calculate_bpm(filename: str, beats_per_loop: int = 4) -> float:
-    duration = get_wav_duration_seconds(filename)
-    bpm = (beats_per_loop / duration) * 60
-    return bpm
-
 
 class StepSequencerApp(tk.Tk):
     def __init__(self, initial_wav=None):
