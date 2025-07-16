@@ -10,6 +10,15 @@
 - [Installation](#installation)
 - [License](#license)
 
+## About
+
+`py-step-audio` is a Python package designed to facilitate the creation of audio files that can be used in step sequencers. It provides a simple interface for generating audio files with various parameters, making it easy to create custom sounds for music production.
+
+## Features
+- Generate audio files for step sequencers
+- Create wrapped sequncers around single samples
+
+
 ## Installation
 
 ```console
