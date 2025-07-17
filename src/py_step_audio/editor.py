@@ -1,8 +1,7 @@
 import tkinter as tk
-
 import numpy as np
 
-from .utils import play_audio
+from utils import play_audio
 
 
 class WaveformTrimUI(tk.Toplevel):
